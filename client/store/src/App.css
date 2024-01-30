@@ -1,0 +1,35 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.app-wrapper {
+  display: flex;
+}
+
+.menu-wrapper {
+  width: 30%;
+}
+.asorti-wrapper {
+  width: 70%
+}
+
+.good-card {
+  display: flex;
+  margin: 0 0 20px 30px;
+  align-items: center;
+}
+
+.good-name {
+  margin: 0 30px;
+}
+.good-card img {
+  width: 40px;
+  height: 40px;
+}
+.max-good-wrapper img{
+  width: 200px;
+  height: 200px;
+}

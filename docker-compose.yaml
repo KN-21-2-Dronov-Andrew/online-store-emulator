@@ -1,0 +1,53 @@
+version: '3.9'
+services:
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - 10000:10000
+      - 10001:10001
+      - 10002:10002
+  convert:
+    container_name: convert
+    build:
+      context: ./image-convert
+    restart: unless-stopped
+    environment:
+      - AZURE_CONNECTION_STRING=AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
+    depends_on:
+      - azurite
+  server:
+    container_name: server
+    build:
+      context: ./server
+    restart: unless-stopped
+    ports:
+      - 4000:4000
+    environment:
+      - AZURE_CONNECTION_STRING=AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;
+      - PORT=4000
+    depends_on:
+      - azurite
+      - convert
+  admin-panel:
+    container_name: admin-panel
+    build:
+      context: ./client/admin-panel
+    restart: unless-stopped
+    ports:
+      - 6000:6000
+    environment:
+      - VITE_HOST=http://localhost:4000
+    depends_on:
+      - server
+  store:
+    container_name: store
+    build:
+      context: ./client/store
+    restart: unless-stopped
+    ports:
+      - 8000:8000
+    environment:
+      - PORT=8000
+      - VITE_HOST=http://localhost:4000
+    depends_on:
+      - server
